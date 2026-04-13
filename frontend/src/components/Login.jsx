@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import axios from '../api';
 import { AuthContext } from '../App';
 import './Login.css';
 
@@ -11,6 +12,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { setToken, setUser } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,6 +31,7 @@ const Login = () => {
         setToken(response.data.token);
         setUser(response.data.user);
         localStorage.setItem('token', response.data.token);
+        navigate('/dashboard');
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Error occurred');

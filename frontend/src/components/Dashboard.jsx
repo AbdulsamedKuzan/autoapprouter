@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../api';
 import { QRCodeCanvas } from 'qrcode.react';
 import { AuthContext } from '../App';
 import './Dashboard.css';
@@ -84,16 +84,21 @@ const Dashboard = () => {
 
   const handleSubscribe = async () => {
     try {
+      const priceId = import.meta.env.VITE_STRIPE_PRICE_ID;
+      if (!priceId) {
+        setError('Stripe fiyat ID ayarlı değil. Yönetici ayarlarını kontrol et.');
+        return;
+      }
+
       const response = await axios.post('/api/payment/create-subscription', {
-        priceId: 'price_1ABC...' // Bu Stripe price ID olacak, kullanıcıdan alacağız
+        priceId
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
-      // Stripe checkout URL'ini aç
       window.location.href = response.data.url;
     } catch (err) {
-      setError('Abonelik oluşturma hatası');
+      setError(err.response?.data?.message || 'Abonelik oluşturma hatası');
     }
   };
 
@@ -182,10 +187,11 @@ const Dashboard = () => {
                 <div key={qr.id} className="qr-card">
                   <h3>{qr.name}</h3>
                   <div className="qr-preview">
-                    <QRCodeCanvas value={qr.slug} size={200} />
+                    <QRCodeCanvas value={qr.qrUrl} size={200} />
                   </div>
                   <div className="qr-info">
                     <p><strong>Slug:</strong> {qr.slug}</p>
+                    <p><strong>Link:</strong> <a href={qr.qrUrl} target="_blank" rel="noreferrer">Aç</a></p>
                     <p><strong>Tarama:</strong> {qr.scansCount}</p>
                     <p><strong>Oluşturulma:</strong> {new Date(qr.createdAt).toLocaleDateString('tr-TR')}</p>
                   </div>

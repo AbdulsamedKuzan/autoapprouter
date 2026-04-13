@@ -70,4 +70,28 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser };
+// Get current authenticated user
+const getCurrentUser = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const stmt = db.prepare('SELECT id, username, email, subscription_plan, subscription_end FROM users WHERE id = ?');
+    const user = stmt.get(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      subscription_plan: user.subscription_plan || 'free',
+      subscription_end: user.subscription_end
+    });
+  } catch (error) {
+    console.error('Get current user error:', error);
+    res.status(500).json({ message: 'Error fetching user info' });
+  }
+};
+
+module.exports = { registerUser, loginUser, getCurrentUser };

@@ -20,6 +20,18 @@ const createQRCode = async (req, res) => {
       return res.status(400).json({ message: 'redirect_urls must be an object' });
     }
 
+        const userStmt = db.prepare('SELECT subscription_plan, subscription_end FROM users WHERE id = ?');
+    const user = userStmt.get(userId);
+    const now = new Date();
+    const hasPremium = user?.subscription_plan === 'premium' && user.subscription_end && new Date(user.subscription_end) > now;
+
+    const countStmt = db.prepare('SELECT COUNT(*) AS count FROM qr_codes WHERE user_id = ?');
+    const existingCount = countStmt.get(userId).count;
+
+    if (!hasPremium && existingCount >= 3) {
+      return res.status(403).json({ message: 'Ücretsiz hesap için maksimum 3 QR kodu hakkın doldu. Abonelik satın alın.' });
+    }
+
     const slug = generateSlug();
 
     const stmt = db.prepare(
