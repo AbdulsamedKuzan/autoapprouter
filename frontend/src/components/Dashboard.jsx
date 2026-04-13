@@ -7,6 +7,7 @@ import './Dashboard.css';
 const Dashboard = () => {
   const { token, user, logout } = useContext(AuthContext);
   const [qrCodes, setQrCodes] = useState([]);
+  const [subscription, setSubscription] = useState({ plan: 'free', isActive: false });
   const [formData, setFormData] = useState({
     name: '',
     android: '',
@@ -19,6 +20,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchQRCodes();
+    fetchSubscriptionStatus();
   }, [token]);
 
   const fetchQRCodes = async () => {
@@ -32,11 +34,29 @@ const Dashboard = () => {
     }
   };
 
+  const fetchSubscriptionStatus = async () => {
+    try {
+      const response = await axios.get('/api/payment/subscription-status', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setSubscription(response.data);
+    } catch (err) {
+      console.log('Subscription status error:', err);
+    }
+  };
+
   const handleCreateQR = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
     setLoading(true);
+
+    // Check subscription limit
+    if (subscription.plan === 'free' && qrCodes.length >= 3) {
+      setError('Ücretsiz hesap ile maksimum 3 QR kodu oluşturabilirsiniz. Premium abonelik alın!');
+      setLoading(false);
+      return;
+    }
 
     try {
       const response = await axios.post(
@@ -62,17 +82,18 @@ const Dashboard = () => {
     }
   };
 
-  const handleDeleteQR = async (id) => {
-    if (window.confirm('Bu QR kodunu silmek istediğinize emin misiniz?')) {
-      try {
-        await axios.delete(`/api/qr/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setSuccess('✅ QR kodu silindi');
-        fetchQRCodes();
-      } catch (err) {
-        setError('Silme hatası');
-      }
+  const handleSubscribe = async () => {
+    try {
+      const response = await axios.post('/api/payment/create-subscription', {
+        priceId: 'price_1ABC...' // Bu Stripe price ID olacak, kullanıcıdan alacağız
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      // Stripe checkout URL'ini aç
+      window.location.href = response.data.url;
+    } catch (err) {
+      setError('Abonelik oluşturma hatası');
     }
   };
 
@@ -81,6 +102,16 @@ const Dashboard = () => {
       <header className="dashboard-header">
         <div className="logo">🚀 QR Router</div>
         <div className="user-info">
+          <div className="subscription-info">
+            <span className={`plan-badge ${subscription.plan}`}>
+              {subscription.plan === 'premium' ? '💎 Premium' : '🆓 Ücretsiz'}
+            </span>
+            {subscription.plan === 'free' && (
+              <button onClick={handleSubscribe} className="subscribe-btn">
+                💳 Yıllık Abonelik Al (100₺)
+              </button>
+            )}
+          </div>
           <span>{user?.username}</span>
           <button onClick={logout} className="logout-btn">Çıkış</button>
         </div>

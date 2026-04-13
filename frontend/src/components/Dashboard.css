@@ -24,6 +24,44 @@
   gap: 20px;
 }
 
+.subscription-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.plan-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.plan-badge.free {
+  background: #ff6b6b;
+  color: white;
+}
+
+.plan-badge.premium {
+  background: #4ecdc4;
+  color: white;
+}
+
+.subscribe-btn {
+  background: #ffd93d;
+  color: #333;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.subscribe-btn:hover {
+  background: #ffb347;
+}
+
 .logout-btn {
   background: rgba(255, 255, 255, 0.3);
   color: white;
