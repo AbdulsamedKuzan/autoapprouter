@@ -1,0 +1,130 @@
+.landing-page {
+  min-height: 100vh;
+  background: radial-gradient(circle at top left, #5f5df0 0%, #3c3ac0 35%, #15152c 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.landing-hero {
+  width: min(1180px, 100%);
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 32px;
+  align-items: stretch;
+}
+
+.landing-copy {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 28px;
+  padding: 48px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.2);
+}
+
+.eyebrow {
+  display: inline-block;
+  margin-bottom: 18px;
+  color: #a6caff;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+.landing-copy h1 {
+  font-size: clamp(3rem, 4vw, 4.8rem);
+  line-height: 1.02;
+  margin: 0;
+  letter-spacing: -0.06em;
+}
+
+.landing-copy p {
+  margin: 24px 0 0;
+  line-height: 1.8;
+  max-width: 620px;
+  color: #e9ebff;
+  font-size: 1.05rem;
+}
+
+.landing-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 28px;
+  border-radius: 999px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #8b95ff, #5a6bff);
+  color: white;
+  box-shadow: 0 16px 40px rgba(90, 107, 255, 0.25);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.landing-info-card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 28px;
+  padding: 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+}
+
+.landing-info-card h2 {
+  margin: 0;
+  font-size: 1.9rem;
+  color: white;
+}
+
+.landing-info-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.landing-info-card li {
+  padding-left: 24px;
+  position: relative;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.landing-info-card li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #7de0a7;
+}
+
+@media (max-width: 900px) {
+  .landing-hero {
+    grid-template-columns: 1fr;
+  }
+}
